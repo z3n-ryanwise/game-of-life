@@ -30,4 +30,26 @@ end
   )
 end
 
+cell_state = {}
+
+on :mouse_down do |event|
+  vector_x = event.x - (event.x % CELL_SIZE)
+  vector_y = event.y - (event.y % CELL_SIZE)
+
+  drawn_cell = cell_state["#{vector_x},#{vector_y}"]
+
+  if drawn_cell
+    drawn_cell.remove
+    cell_state["#{vector_x},#{vector_y}"] = nil
+  else
+    new_shape = Square.new(
+      x: vector_x, y:vector_y,
+      size: CELL_SIZE,
+      color: 'blue',
+      z: 10
+    )
+    cell_state["#{vector_x},#{vector_y}"] = new_shape
+  end
+end
+
 show
