@@ -4,6 +4,7 @@ set title: "Game of life"
 set background: "white"
 
 CELL_SIZE = 60
+CELL_STATE = {}
 WINDOW_WIDTH = CELL_SIZE * 20
 WINDOW_HEIGHT = CELL_SIZE * 20
 
@@ -30,38 +31,35 @@ end
   )
 end
 
-cell_state = {}
+def render_cell(x, y)
+  return if CELL_STATE["#{x},#{y}"].is_a?(Square)
+
+  new_shape = Square.new(
+    x: x, y: y,
+    size: CELL_SIZE,
+    color: 'blue',
+    z: -10
+  )
+  CELL_STATE["#{x},#{y}"] = new_shape
+end
+
 
 tick = 0
 update do
   if tick % 120 == 0
-    cell_state.compact!
+    CELL_STATE.compact!
     p "cell_state"
-    p cell_state
+    p CELL_STATE
 
-    cell_state.values.each do |shape|
+    CELL_STATE.values.each do |shape|
       p "shape"
       p shape
       # if drawn_cell
         shape.remove
-        cell_state["#{shape.x},#{shape.y}"] = nil
+        CELL_STATE["#{shape.x},#{shape.y}"] = nil
+        render_cell(shape.x+CELL_SIZE, shape.y)
+        render_cell(shape.x, shape.y+CELL_SIZE)
 
-        new_shape = Square.new(
-          x: shape.x + CELL_SIZE, y: shape.y,
-          size: CELL_SIZE,
-          color: 'blue',
-          z: -10
-        )
-        cell_state["#{shape.x + CELL_SIZE},#{shape.y}"] = new_shape
-
-        new_shape = Square.new(
-          x: shape.x, y: shape.y + CELL_SIZE,
-          size: CELL_SIZE,
-          color: 'blue',
-          z: -10
-        )
-        cell_state["#{shape.x},#{shape.y + CELL_SIZE}"] = new_shape
-      # end
     end
   end
   tick += 1
@@ -75,18 +73,18 @@ on :mouse_down do |event|
   p "MOUSE DOWN EVENT!"
   p vector_x, vector_y
 
-  drawn_cell = cell_state["#{vector_x},#{vector_y}"]
+  drawn_cell = CELL_STATE["#{vector_x},#{vector_y}"]
 
   p "drawn cell exist?: #{!drawn_cell.nil?}"
 
   if drawn_cell
     p "removing drawn cell"
     drawn_cell.remove
-    cell_state["#{vector_x},#{vector_y}"] = nil
-    cell_state.compact!
+    CELL_STATE["#{vector_x},#{vector_y}"] = nil
+    CELL_STATE.compact!
     
     p "#### cell_state after deletion"
-    p cell_state
+    p CELL_STATE
   else
     new_shape = Square.new(
       x: vector_x, y:vector_y,
@@ -94,7 +92,7 @@ on :mouse_down do |event|
       color: 'blue',
       z: 10
     )
-    cell_state["#{vector_x},#{vector_y}"] = new_shape
+    CELL_STATE["#{vector_x},#{vector_y}"] = new_shape
   end
 end
 
