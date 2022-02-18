@@ -4,107 +4,116 @@ COLOUR_CELL = 'blue'
 COLOUR_GRID = 'green'
 COLOUR_BACKGROUND = 'black'
 
-set title: 'Game of life'
-set background: COLOUR_BACKGROUND
+class Application
+  def initialize
+    @cell_state = {}
+    @cell_size = 60
+    @loop_interval = 120
+    @window_width = @cell_size * 20
+    @window_height = @cell_size * 20
+  end
 
+  def run
+    Window.set title: 'Game of life'
+    Window.set background: COLOUR_BACKGROUND
+    Window.set width: @window_width
+    Window.set height: @window_height
 
-CELL_SIZE = 60
-CELL_STATE = {}
-WINDOW_WIDTH = CELL_SIZE * 20
-WINDOW_HEIGHT = CELL_SIZE * 20
-
-set width: WINDOW_WIDTH
-set height: WINDOW_HEIGHT
-
-# Draw the vertical lines for the grid
-(WINDOW_WIDTH / CELL_SIZE).times do |n|
-  Line.new(
-    x1: n * CELL_SIZE, y1: 0,
-    x2: n * CELL_SIZE, y2: WINDOW_HEIGHT,
-    width: 1,
-    color: COLOUR_GRID
-  )
-end
-
-# Draw the horizontal lines for the grid
-(WINDOW_WIDTH / CELL_SIZE).times do |n|
-  Line.new(
-    x1: 0, y1: n * CELL_SIZE,
-    x2: WINDOW_WIDTH, y2: n * CELL_SIZE,
-    width: 1,
-    color: COLOUR_GRID
-  )
-end
-
-def render_cell(x, y)
-  return if CELL_STATE["#{x},#{y}"].is_a?(Square)
-
-  new_shape = Square.new(
-    x: x, y: y,
-    size: CELL_SIZE,
-    color: COLOUR_CELL,
-    z: -10
-  )
-  CELL_STATE["#{x},#{y}"] = new_shape
-end
-
-def remove_cell(x, y)
-  drawn_cell = CELL_STATE["#{x},#{y}"]
-  drawn_cell.remove
-  CELL_STATE["#{x},#{y}"] = nil
-  CELL_STATE.compact!
-end
-
-tick = 0
-update do
-  if tick % 120 == 0
-    CELL_STATE.clone.each_value do |shape|
-
-      render_cell(shape.x + CELL_SIZE, shape.y)
-      render_cell(shape.x - CELL_SIZE, shape.y)
-      render_cell(shape.x, shape.y + CELL_SIZE)
-      render_cell(shape.x, shape.y - CELL_SIZE)
-
-      # current_state = CELL_STATE
-      # {
-      #   "60,60" => shape object
-      # }
-
-      # # translate state frm pixel coordinate to index coordinate
-      # Option 1: { "60,60" => shape object } =>
-      # * Option 2: [
-      #   [0,0,0,0],
-      #   [0,1,0,0],
-      #   [0,0,0,0],
-      #   [0,0,0,0]]
-
-      # new_state = GameOfLife.call(current_state, grid_width, grid_height)
-      # * Option 2: [[0,0,0,0], [0,1,0,0], [0,0,0,0], [0,0,0,0]]
-
-      # some logic to add or remove based on the diff between current_state and new_state
+    pp "window: #{@window_width}"
+    pp "cell_size: #{@cell_size}"
+    # Draw the vertical lines for the grid
+    (@window_width / @cell_size).times do |n|
+      Line.new(
+        x1: n * @cell_size, y1: 0,
+        x2: n * @cell_size, y2: @window_height,
+        width: 1,
+        color: COLOUR_GRID
+      )
     end
+
+    # Draw the horizontal lines for the grid
+    (@window_width / @cell_size).times do |n|
+      Line.new(
+        x1: 0, y1: n * @cell_size,
+        x2: @window_width, y2: n * @cell_size,
+        width: 1,
+        color: COLOUR_GRID
+      )
+    end
+
+    tick = 0
+    Window.update do
+      if tick % @loop_interval == 0
+        @cell_state.clone.each_value do |shape|
+          render_cell(shape.x + @cell_size, shape.y)
+          render_cell(shape.x - @cell_size, shape.y)
+          render_cell(shape.x, shape.y + @cell_size)
+          render_cell(shape.x, shape.y - @cell_size)
+
+          # current_state = @cell_state
+          # {
+          #   "60,60" => shape object
+          # }
+
+          # # translate state frm pixel coordinate to index coordinate
+          # Option 1: { "60,60" => shape object } =>
+          # * Option 2: [
+          #   [0,0,0,0],
+          #   [0,1,0,0],
+          #   [0,0,0,0],
+          #   [0,0,0,0]]
+
+          # new_state = GameOfLife.call(current_state, grid_width, grid_height)
+          # * Option 2: [[0,0,0,0], [0,1,0,0], [0,0,0,0], [0,0,0,0]]
+
+          # some logic to add or remove based on the diff between current_state and new_state
+        end
+      end
+      tick += 1
+    end
+
+    Window.on :mouse_down do |event|
+      vector_x = event.x - (event.x % @cell_size)
+      vector_y = event.y - (event.y % @cell_size)
+
+      p 'MOUSE DOWN EVENT!'
+      p vector_x, vector_y
+
+      drawn_cell = @cell_state["#{vector_x},#{vector_y}"]
+
+      p "drawn cell exist?: #{!drawn_cell.nil?}"
+
+      if drawn_cell
+        p 'removing cell'
+        remove_cell(vector_x, vector_y)
+      else
+        p 'drawing cell'
+        render_cell(vector_x, vector_y)
+      end
+    end
+
+    Window.show
   end
-  tick += 1
+
+  def render_cell(x, y)
+    return if @cell_state["#{x},#{y}"].is_a?(Square)
+
+    new_shape = Square.new(
+      x: x, y: y,
+      size: @cell_size,
+      color: COLOUR_CELL,
+      z: -10
+    )
+    @cell_state["#{x},#{y}"] = new_shape
+  end
+
+  def remove_cell(x, y)
+    drawn_cell = @cell_state["#{x},#{y}"]
+    drawn_cell.remove
+    @cell_state["#{x},#{y}"] = nil
+    @cell_state.compact!
+  end
 end
 
-on :mouse_down do |event|
-  vector_x = event.x - (event.x % CELL_SIZE)
-  vector_y = event.y - (event.y % CELL_SIZE)
-
-  p 'MOUSE DOWN EVENT!'
-  p vector_x, vector_y
-
-  drawn_cell = CELL_STATE["#{vector_x},#{vector_y}"]
-
-  p "drawn cell exist?: #{!drawn_cell.nil?}"
-
-  if drawn_cell
-    p "removing cell"
-    remove_cell(vector_x, vector_y)
-  else
-    p "drawing cell"
-    render_cell(vector_x, vector_y)
-  end
-end
-
-show
+game = Application.new
+game.run
