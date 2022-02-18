@@ -34,29 +34,31 @@ end
 def render_cell(x, y)
   return if CELL_STATE["#{x},#{y}"].is_a?(Square)
 
-  Square.new(
+  new_shape = Square.new(
     x: x, y: y,
     size: CELL_SIZE,
     color: 'blue',
     z: -10
   )
+  CELL_STATE["#{x},#{y}"] = new_shape
+end
+
+def remove_cell(x, y)
+  drawn_cell = CELL_STATE["#{x},#{y}"]
+  drawn_cell.remove
+  CELL_STATE["#{x},#{y}"] = nil
+  CELL_STATE.compact!
 end
 
 tick = 0
 update do
-  if tick % 120.zero?
-    CELL_STATE.compact!
-    p 'cell_state'
-    p CELL_STATE
+  if tick % 120 == 0
+    CELL_STATE.clone.each_value do |shape|
 
-    CELL_STATE.each_value do |shape|
-      p 'shape'
-      p shape
-      shape.remove
-      CELL_STATE["#{shape.x},#{shape.y}"] = nil
-
-      CELL_STATE["#{x},#{y}"] = render_cell(shape.x + CELL_SIZE, shape.y)
-      CELL_STATE["#{x},#{y}"] = render_cell(shape.x, shape.y + CELL_SIZE)
+      render_cell(shape.x + CELL_SIZE, shape.y)
+      render_cell(shape.x - CELL_SIZE, shape.y)
+      render_cell(shape.x, shape.y + CELL_SIZE)
+      render_cell(shape.x, shape.y - CELL_SIZE)
 
       # current_state = CELL_STATE
       # {
@@ -92,21 +94,11 @@ on :mouse_down do |event|
   p "drawn cell exist?: #{!drawn_cell.nil?}"
 
   if drawn_cell
-    p 'removing drawn cell'
-    drawn_cell.remove
-    CELL_STATE["#{vector_x},#{vector_y}"] = nil
-    CELL_STATE.compact!
-
-    p '#### cell_state after deletion'
-    p CELL_STATE
+    p "removing cell"
+    remove_cell(vector_x, vector_y)
   else
-    new_shape = Square.new(
-      x: vector_x, y: vector_y,
-      size: CELL_SIZE,
-      color: 'blue',
-      z: 10
-    )
-    CELL_STATE["#{vector_x},#{vector_y}"] = new_shape
+    p "drawing cell"
+    render_cell(vector_x, vector_y)
   end
 end
 
