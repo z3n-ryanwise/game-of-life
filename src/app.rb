@@ -1,7 +1,12 @@
 require 'ruby2d'
 
+COLOUR_CELL = 'blue'
+COLOUR_GRID = 'green'
+COLOUR_BACKGROUND = 'black'
+
 set title: 'Game of life'
-set background: 'white'
+set background: COLOUR_BACKGROUND
+
 
 CELL_SIZE = 60
 CELL_STATE = {}
@@ -17,7 +22,7 @@ set height: WINDOW_HEIGHT
     x1: n * CELL_SIZE, y1: 0,
     x2: n * CELL_SIZE, y2: WINDOW_HEIGHT,
     width: 1,
-    color: 'black'
+    color: COLOUR_GRID
   )
 end
 
@@ -27,7 +32,7 @@ end
     x1: 0, y1: n * CELL_SIZE,
     x2: WINDOW_WIDTH, y2: n * CELL_SIZE,
     width: 1,
-    color: 'black'
+    color: COLOUR_GRID
   )
 end
 
@@ -37,7 +42,7 @@ def render_cell(x, y)
   new_shape = Square.new(
     x: x, y: y,
     size: CELL_SIZE,
-    color: 'blue',
+    color: COLOUR_CELL,
     z: -10
   )
   CELL_STATE["#{x},#{y}"] = new_shape
