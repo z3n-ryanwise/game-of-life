@@ -62,17 +62,5 @@ describe GameOfLife::Rule1 do
         end
       end
     end
-
-    # it 'any cell with fewer than two live cells returns false' do
-    #   expect(GameOfLife.rule1(state, [0,0])).to eq(false)
-    #   expect(GameOfLife.rule1(state, [4,2])).to eq(false)
-    #   expect(GameOfLife.rule1(state, [0,4])).to eq(false)
-    #   expect(GameOfLife.rule1(state, [3,4])).to eq(false)
-    # end
-
-    # it 'any live cell with two or more live cells returns true' do
-    #   expect(GameOfLife.rule1(state, [0,1])).to eq(true)
-    #   expect(GameOfLife.rule1(state, [4,4])).to eq(true)
-    # end
   end
 end
