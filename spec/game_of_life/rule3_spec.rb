@@ -1,8 +1,8 @@
 require 'spec_helper'
-require_relative '../../src/game_of_life/rule2'
+require_relative '../../src/game_of_life/rule3'
 
-describe GameOfLife::Rule2 do
-  context 'Local stable population' do
+describe GameOfLife::Rule3 do
+  context 'Local overpopulation' do
     let(:state) do
       [
         [0, 0, 0, 0, 0],
@@ -19,11 +19,11 @@ describe GameOfLife::Rule2 do
       ]
     end
 
-    let(:expected_alive_cells) { [[1, 2], [2, 3], [3, 1]] }
+    let(:expected_alive_cells) { [[1, 2], [2, 3], [3, 1], [4, 3]] }
 
     it 'returns true for any expected alive cells' do
       expected_alive_cells.each do |cell|
-        expect(described_class.rule2(state, cell)).to eq(true)
+        expect(described_class.rule3(state, cell)).to eq(true)
       end
     end
 
@@ -32,7 +32,7 @@ describe GameOfLife::Rule2 do
         row.each_with_index do |_col, col_position|
           cell_coordinate = [row_position, col_position]
           unless expected_alive_cells.include?(cell_coordinate)
-            expect(described_class.rule2(state, cell_coordinate)).to eq(false)
+            expect(described_class.rule3(state, cell_coordinate)).to eq(false)
           end
         end
       end
