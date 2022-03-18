@@ -1,6 +1,6 @@
 module GameOfLife
   class Rule3
-    def self.rule3(input_state, coord)
+    def self.call(input_state, coord)
       row_position = coord[0]
       col_position = coord[1]
 
