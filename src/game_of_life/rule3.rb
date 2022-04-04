@@ -24,7 +24,7 @@ module GameOfLife
       neighbour_count = [left_neighbour, right_neighbour, up_neighbour, down_neighbour, up_left_neighbour,
                          up_right_neighbour, down_left_neighbour, down_right_neighbour].inject(&:+)
 
-      neighbour_count <= 3
+      neighbour_count <= 3 ? NOOP_STATE : DEAD_STATE
     end
   end
 end

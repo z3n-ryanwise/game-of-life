@@ -4,7 +4,7 @@ module GameOfLife
       row_position = coord[0]
       col_position = coord[1]
 
-      return true if input_state[row_position][col_position] == 1
+      return NOOP_STATE if input_state[row_position][col_position] == 1
 
       width = input_state[col_position].size
       height = input_state.size
@@ -24,7 +24,7 @@ module GameOfLife
       neighbour_count = [left_neighbour, right_neighbour, up_neighbour, down_neighbour, up_left_neighbour,
                          up_right_neighbour, down_left_neighbour, down_right_neighbour].inject(&:+)
 
-      neighbour_count == 3
+      neighbour_count == 3 ? ALIVE_STATE : NOOP_STATE
     end
   end
 end
