@@ -23,7 +23,7 @@ describe GameOfLife::Rule3 do
 
     it 'returns true for any expected alive cells' do
       expected_alive_cells.each do |cell|
-        expect(described_class.rule3(state, cell)).to eq(true)
+        expect(described_class.call(state, cell)).to eq(true)
       end
     end
 
@@ -32,7 +32,7 @@ describe GameOfLife::Rule3 do
         row.each_with_index do |_col, col_position|
           cell_coordinate = [row_position, col_position]
           unless expected_alive_cells.include?(cell_coordinate)
-            expect(described_class.rule3(state, cell_coordinate)).to eq(false)
+            expect(described_class.call(state, cell_coordinate)).to eq(false)
           end
         end
       end
