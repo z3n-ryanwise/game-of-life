@@ -114,10 +114,10 @@ describe GameOfLife::Main do
     let(:rules) do
       [
         [
-          ->(_, _) { true }
+          ->(_, _) { 1 }
         ],
         [
-          ->(_, _) { false }
+          ->(_, _) { -1 }
         ]
       ]
     end
@@ -127,9 +127,9 @@ describe GameOfLife::Main do
     it 'returns with all values switched to zero' do
       expect(described_class.call(state[1], rules[1])).to eq(expected_state[1])
     end
-    it 'applies the rules in the order specified' do
+    it 'calculates all rules applied by summing their return values' do
       expect(described_class.call(state[1], [rules[1], rules[0]].flatten)).to eq(expected_state[0])
-      expect(described_class.call(state[1], [rules[0], rules[1]].flatten)).to eq(expected_state[1])
+      expect(described_class.call(state[1], [rules[1], rules[1]].flatten)).to eq(expected_state[1])
     end
   end
 end
