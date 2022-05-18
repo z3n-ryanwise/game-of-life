@@ -13,20 +13,20 @@ describe GameOfLife::Rule1 do
       ]
     end
 
-    let(:expected_alive_cells) { [[0, 2]] }
+    let(:skipped_cells_for_rule) { [[0, 2]] }
 
-    it 'returns true for the expected alive cells' do
-      expected_alive_cells.each do |cell|
-        expect(described_class.call(state, cell)).to eq(true)
+    it 'returns 0 for the cells skipped for rule' do
+      skipped_cells_for_rule.each do |cell|
+        expect(described_class.call(state, cell)).to eq(0)
       end
     end
 
-    it 'returns false for other cells' do
+    it 'returns -1 for cells that would be killed by rule' do
       state.each_with_index do |row, row_position|
         row.each_with_index do |_col, col_position|
           cell_coordinate = [row_position, col_position]
-          unless expected_alive_cells.include?(cell_coordinate)
-            expect(described_class.call(state, cell_coordinate)).to eq(false)
+          unless skipped_cells_for_rule.include?(cell_coordinate)
+            expect(described_class.call(state, cell_coordinate)).to eq(-1)
           end
         end
       end
@@ -44,20 +44,20 @@ describe GameOfLife::Rule1 do
       ]
     end
 
-    let(:expected_alive_cells) { [[0, 1], [4, 4]] }
+    let(:skipped_cells_for_rule) { [[0, 1], [4, 4]] }
 
-    it 'returns true for the expected alive cells' do
-      expected_alive_cells.each do |cell|
-        expect(described_class.call(state, cell)).to eq(true)
+    it 'returns 0 for the cells skipped for rule' do
+      skipped_cells_for_rule.each do |cell|
+        expect(described_class.call(state, cell)).to eq(0)
       end
     end
 
-    it 'returns false for other cells' do
+    it 'returns -1 for cells that would be killed by rule' do
       state.each_with_index do |row, row_position|
         row.each_with_index do |_col, col_position|
           cell_coordinate = [row_position, col_position]
-          unless expected_alive_cells.include?(cell_coordinate)
-            expect(described_class.call(state, cell_coordinate)).to eq(false)
+          unless skipped_cells_for_rule.include?(cell_coordinate)
+            expect(described_class.call(state, cell_coordinate)).to eq(-1)
           end
         end
       end
